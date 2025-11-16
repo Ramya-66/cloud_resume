@@ -10,7 +10,7 @@ from io import BytesIO
 
 # -------------------- APP SETUP --------------------
 app = Flask(__name__)
-CORS(app)  # allow Wix Studio frontend to access backend
+CORS(app)  # allow Wix frontend to access backend
 
 # -------------------- ROOT --------------------
 @app.route("/", methods=["GET"])
@@ -26,12 +26,12 @@ def analyze_resume():
         return jsonify({"error": "No file URL provided"}), 400
 
     try:
-        # Download PDF from Wix UploadButton URL
+        # Download PDF from Wix URL
         response = requests.get(file_url)
-        response.raise_for_status()  # raise error if download failed
+        response.raise_for_status()
         pdf_file = BytesIO(response.content)
 
-        # Extract text using your existing function
+        # Extract text
         text = extract_text_textract(pdf_file)
 
         # Analyze
@@ -49,8 +49,6 @@ def analyze_resume():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
 # -------------------- 2️⃣ Resume Creator --------------------
 @app.route("/create-resume", methods=["POST"])
 def create_resume_api():
@@ -83,5 +81,5 @@ def upskill_api():
 
 # -------------------- RUN --------------------
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Render assigns port dynamically
+    port = int(os.environ.get("PORT", 5000))  # Render assigns dynamic port
     app.run(host="0.0.0.0", port=port)
